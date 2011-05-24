@@ -3,13 +3,13 @@ package Aspect::Library::NYTProf;
 use 5.008002;
 use strict;
 use warnings;
-use Aspect::Modular 0.40 ();
-use Devel::NYTProf  3.01 ();
+use Devel::NYTProf    3.01 ();
+use Aspect::Modular   0.98 ();
+use Aspect::Advice::Around ();
 
-our $VERSION = '0.01';
+our $VERSION = '0.98';
 our @ISA     = 'Aspect::Modular';
-
-my $DEPTH = 0;
+our $DEPTH   = 0;
 
 sub get_advice {
 	Aspect::Advice::Around->new(
@@ -17,7 +17,7 @@ sub get_advice {
 		pointcut => $_[1],
 		code     => sub {
 			DB::enable_profile() unless $DEPTH++;
-			$_[0]->run_original;
+			$_->proceed;
 			DB::disable_profile() unless --$DEPTH;
 		},
 	);
@@ -79,7 +79,7 @@ L<Aspect>, L<Aspect::Library::Profiler>
 
 =head1 COPYRIGHT
 
-Copyright 2010 Adam Kennedy.
+Copyright 2010 - 2011 Adam Kennedy.
 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
